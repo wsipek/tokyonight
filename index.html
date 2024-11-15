@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Нічний Токіо</title>
+  <style>
+    body {
+      background-color: #111; 
+      color: #FF0000;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    #logo {
+      width: 150px; 
+      margin: 20px auto;
+      display: block;
+    }
+    h1 {
+      color: #FF0000;
+      animation: flicker 2s infinite;
+      margin-top: 20px;
+    }
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.5;
+      }
+      26%, 50% {
+        opacity: 0.7;
+      }
+      60% {
+        opacity: 0.3;
+      }
+    }
+
+    #sliderContainer {
+      margin: 40px auto;
+      width: 50%;
+      position: relative;
+    }
+
+    .ui-slider {
+      background-color: #333;
+    }
+
+    .ui-slider-handle {
+      background-color: #FF0000;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #FF0000; 
+      transition: box-shadow 0.3s ease;
+    }
+
+    .ui-slider-handle:hover {
+      box-shadow: 0 0 20px #FF0000; 
+    }
+
+    .gif {
+      width: 200px;
+      margin: 10px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .gif:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #FF0000, 0 0 20px #FF0000;
+    }
+
+    audio {
+      display: block;
+      margin: 10px auto;
+    }
+    #roulette {
+      margin: 20px auto;
+      width: 400px;
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+      border: 2px solid #FF0000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #222;
+    }
+
+    #rouletteContainer {
+      display: flex;
+      position: absolute;
+      transition: transform 3s ease-out; 
+    }
+
+    #roulette img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+    }
+
+    #roulette img.active {
+      opacity: 1;
+    }
+
+    #spinButton {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #FF0000;
+      background-color: #333;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #spinButton:hover {
+      background-color: #222;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+<body>
+  <img id="logo" src="logo.jpg" alt="Логотип">
+  <h1>Нічний Токіо</h1>
+  <div id="sliderContainer">
+    <div id="slider"></div>
+  </div>
+  <img class="gif" src="1.gif" alt="Гіф 1">
+  <img class="gif" src="2.gif" alt="Гіф 2">
+  <img class="gif" src="3.gif" alt="Гіф 3">
+  <audio id="audioPlayer" controls>
+    <source src="1.mp3" type="audio/mp3">
+    Ваш браузер не підтримує аудіо.
+  </audio>
+  <div id="roulette">
+    <div id="rouletteContainer">
+      <img src="11.jpg" alt="Машина 1">
+      <img src="22.jpg" alt="Машина 2">
+      <img src="33.jpg" alt="Машина 3">
+      <img src="44.jpg" alt="Машина 4">
+      <img src="55.jpg" alt="Машина 5">
+    </div>
+  </div>
+  <button id="spinButton">Крутити рулетку</button>
+  <script>
+    $(function() {
+      $("#slider").slider({
+        min: 0,
+        max: 2,
+        value: 0,
+        slide: function(event, ui) {
+          let audio = $("#audioPlayer")[0];
+          switch (ui.value) {
+            case 0:
+              audio.src = "1.mp3";
+              break;
+            case 1:
+              audio.src = "2.mp3";
+              break;
+            case 2:
+              audio.src = "3.mp3";
+              break;
+          }
+          audio.play();
+        }
+      });
+      let isSpinning = false;
+      const rouletteContainer = $("#rouletteContainer");
+      const images = $("#roulette img");
+      const imageCount = images.length;
+      const imageWidth = $("#roulette").width();
+      $("#spinButton").on("click", function() {
+        if (isSpinning) return; 
+        isSpinning = true;
+        images.removeClass("active");
+        let randomIndex = Math.floor(Math.random() * imageCount);
+        let targetPosition = -(randomIndex * imageWidth);
+        rouletteContainer.css("transform", "translateX(" + (-imageWidth * 5) + "px)");
+        setTimeout(function() {
+          rouletteContainer.css("transition", "transform 1s ease-out");
+          rouletteContainer.css("transform", "translateX(" + targetPosition + "px)"); 
+        }, 1000); 
+        setTimeout(function() {
+          images.eq(randomIndex).addClass("active");
+          isSpinning = false;
+        }, 4000); 
+      });
+    });
+  </script>
+
+</body>
+</html>
